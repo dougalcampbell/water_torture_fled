@@ -11,7 +11,7 @@
  * @license BSL 1.0
  */
 
-#define WATERTORTURE_VERSION "1.0.0"
+#define WATERTORTURE_VERSION "1.1.0"
 /**
  * The various states for our state machnine, which is handled in our `step()`
  * and `draw()` methods. See the diagram in `Water_Torture.cpp`.
