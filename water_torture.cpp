@@ -70,7 +70,7 @@ void Water_Torture::step() {
     
   } else if ( state == WT_SWELLING ) {
     ++position;
-    if (color.blue <= 10 || color.blue - position/2 <= 10) {
+    if (color.getLuma() <= 10 || color.getLuma() - position/2 <= 10) {
       state = WT_FALLING;
       position = 0;
     }  
@@ -140,8 +140,8 @@ void Water_Torture::animate() {
     if (!is_active()) {
       // Create a new droplet
 
-      // Note: Hardcoded to Blue here.
-      color = CRGB::Blue;
+      // Reset to original base color.
+      color = base_color;
       droplet_pause = 200 + random16() % 500;
       state = (random8() < 96) ? WT_SWELLING : WT_FALLING;
       // reset positon & speed for new droplet
@@ -168,15 +168,32 @@ uint8_t Water_Torture::getState() {
     return state;
 }
 
+int16_t Water_Torture::getSpeed() {
+    return speed;
+}
+
+uint16_t Water_Torture::getGravity() {
+    return gravity;
+}
+
 /**
  * Setters
  */
-void Water_Torture::setColor(uint32_t newColor) {
-    color = newColor;
+void Water_Torture::setColor(CRGB newColor) {
+    base_color = newColor;
+    color = base_color;
 }
 
-void Water_Torture::setState(uint8_t newState) {
+void Water_Torture::setState(States newState) {
     state = newState;
+}
+
+void Water_Torture::setSpeed(int16_t newspeed) {
+  speed = newspeed;
+}
+
+void Water_Torture::setGravity(uint16_t newgravity) {
+  gravity = newgravity;
 }
 
 void Water_Torture::setFastled(CLEDController* fled) {

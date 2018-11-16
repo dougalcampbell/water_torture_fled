@@ -34,9 +34,13 @@ class Water_Torture {
     // getters/setters
     uint32_t getColor();
     uint8_t getState();
+    int16_t getSpeed();
+    uint16_t getGravity();
 
-    void setColor(uint32_t);
-    void setState(uint8_t);
+    void setColor(CRGB);
+    void setState(States);
+    void setSpeed(int16_t);
+    void setGravity(uint16_t);
     void setFastled(CLEDController*);
     void setLeds(CRGB*);
 
@@ -62,10 +66,11 @@ class Water_Torture {
 
     uint16_t position = 0;
     int16_t speed = 0;
-    static const uint16_t gravity = 8;
+    uint16_t gravity = 8;
     uint16_t NumLeds;
     uint8_t maxpos;
     
+    CRGB base_color = CRGB::Blue;
     CRGB color = CRGB::Blue;
     CRGB *leds;
     CLEDController *fastled;

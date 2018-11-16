@@ -24,15 +24,16 @@ CLEDController *fled_ptr; // Pointer to FastLED instance
 #include "water_torture.h"
 
 Water_Torture droplet = Water_Torture();
-//Water_Torture droplet2 = Water_Torture();
+Water_Torture droplet2 = Water_Torture();
 
 void setup() {
-    fled_ptr = &(FastLED.addLeds<WS2811,DATA_PIN,RGB>(leds, NUM_LEDS));
+    fled_ptr = &(FastLED.addLeds<WS2811,DATA_PIN,GRB>(leds, NUM_LEDS));
     FastLED.setBrightness(255);
     droplet.setFastled(fled_ptr);
-    //droplet2.setFastled(fled_ptr);
-    //droplet2.setColor(CRGB::Orange);
-    //droplet2.droplet_pause = 750;
+    droplet2.setFastled(fled_ptr);
+    droplet2.setColor(CRGB::Orange);
+    droplet2.setGravity(5);
+    droplet2.droplet_pause = 750;
 
     /* Uncomment `test()` method in Water_Torture to use */
     //droplet.test();
@@ -43,7 +44,7 @@ void setup() {
 
 void loop() {
   droplet.animate();
-  //droplet2.animate();
+  droplet2.animate();
 }
 
 // - fin -
