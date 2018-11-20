@@ -11,7 +11,7 @@
  * @license BSL 1.0
  */
 
-#define WATERTORTURE_VERSION "1.1.0"
+#define WATERTORTURE_VERSION "1.2.0"
 /**
  * The various states for our state machnine, which is handled in our `step()`
  * and `draw()` methods. See the diagram in `Water_Torture.cpp`.
@@ -35,12 +35,14 @@ class Water_Torture {
     uint32_t getColor();
     uint8_t getState();
     int16_t getSpeed();
-    uint16_t getGravity();
+    int16_t getGravity();
+    bool getReverse();
 
     void setColor(CRGB);
     void setState(States);
     void setSpeed(int16_t);
-    void setGravity(uint16_t);
+    void setGravity(int16_t);
+    void setReverse(bool);
     void setFastled(CLEDController*);
     void setLeds(CRGB*);
 
@@ -52,8 +54,6 @@ class Water_Torture {
     bool is_active(void) const;
     uint16_t droplet_pause;
 
-    //void test(void);
-
   private:
     static uint8_t add_clipped(uint16_t, uint16_t);
     static void add_clipped_to(CRGB*, CRGB);
@@ -61,14 +61,14 @@ class Water_Torture {
     static CRGB scale(CRGB, uint16_t);
     
     States state = WT_SWELLING;
-    bool allow_swelling = true;
     static const uint16_t collision_scaling = 40;
 
     uint16_t position = 0;
     int16_t speed = 0;
-    uint16_t gravity = 8;
+    int16_t gravity = 8;
     uint16_t NumLeds;
     uint8_t maxpos;
+    bool reverse_dir = false;
     
     CRGB base_color = CRGB::Blue;
     CRGB color = CRGB::Blue;
