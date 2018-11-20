@@ -75,8 +75,6 @@ void Water_Torture::step() {
       position = 0;
     }  
   }
-
-    //leds[position] = color;
 }
 
 // perform one step and draw
@@ -86,21 +84,36 @@ void Water_Torture::step(CRGB *arr) {
 }
 
 void Water_Torture::draw(CRGB *arr) {
+  uint8_t position8 = position >> 8;
+  uint8_t remainder = position; // get lower bits
   
-  if (state == WT_FALLING || state == WT_BOUNCING) {
-    uint8_t position8 = position >> 8;
-    uint8_t remainder = position; // get lower bits
+  // Allow direction to be reversed:
+  uint16_t startpos = (reverse_dir ? maxpos : 0);
+  uint16_t endpos   = (reverse_dir ? 0 : maxpos);
+  
+  uint16_t where;
+  if (reverse_dir) {
+    if (position8 > maxpos) {
+      where = 0;
+    } else {
+      where = maxpos - position8;
+    }
+  } else {
+    where = position8;
+  }
 
-    add_clipped_to(&leds[position8], scale(color, 256 - remainder));
+  if (state == WT_FALLING || state == WT_BOUNCING) {
+    add_clipped_to(&leds[where], scale(color, 256 - remainder));
     if (remainder) {
-      add_clipped_to(&leds[position8+1], scale(color, remainder));
+      // Also light the adjacent pixel, to add to the motion illusion:
+      add_clipped_to( &leds[where + ( (reverse_dir && where) ? -1 : 1 )], scale(color, where));
     }
 
     if (state == WT_BOUNCING) {
-      add_clipped_to(&leds[maxpos], color);
+      add_clipped_to(&leds[endpos], color);
     }
   } else if (state == WT_SWELLING) {
-    add_clipped_to( &leds[0], scale(color, position));
+    add_clipped_to( &leds[startpos], scale(color, where));
   }
 }
 
@@ -143,7 +156,7 @@ void Water_Torture::animate() {
       // Reset to original base color.
       color = base_color;
       droplet_pause = 200 + random16() % 500;
-      state = (random8() < 96) ? WT_SWELLING : WT_FALLING;
+      state = (random8() < 128) ? WT_SWELLING : WT_FALLING;
       // reset positon & speed for new droplet
       position = 0;
       speed = 0;
@@ -172,8 +185,12 @@ int16_t Water_Torture::getSpeed() {
     return speed;
 }
 
-uint16_t Water_Torture::getGravity() {
+int16_t Water_Torture::getGravity() {
     return gravity;
+}
+
+bool Water_Torture::getReverse() {
+  return reverse_dir;
 }
 
 /**
@@ -192,10 +209,13 @@ void Water_Torture::setSpeed(int16_t newspeed) {
   speed = newspeed;
 }
 
-void Water_Torture::setGravity(uint16_t newgravity) {
+void Water_Torture::setGravity(int16_t newgravity) {
   gravity = newgravity;
 }
 
+void Water_Torture::setReverse(bool rev) {
+  reverse_dir = rev;
+}
 void Water_Torture::setFastled(CLEDController* fled) {
   fastled = fled;
   leds = fastled->leds();
@@ -209,19 +229,5 @@ void Water_Torture::setFastled(CLEDController* fled) {
 void Water_Torture::setLeds(CRGB* arr) {
   leds = arr;
 }
-
-/*
-// 
-void Water_Torture::test() {
-  fastled->clearLedData();
-  for (int i = 0; i < NumLeds; i++) {
-    leds[i] = CHSV(i * 5, 255, 255);
-  }
-  fastled->showLeds();
-  FastLED.delay(1000);
-  fastled->clearLedData();
-
-}
-*/
 
 // - fin -
